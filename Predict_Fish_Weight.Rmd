@@ -56,4 +56,39 @@ which.max(summary.out$adjr2)
 summary.out$which[2,]
 ```
 
-Both summaries above state that the best model to use that predicts the weight of perch is the regression model that has the two variables Height-Width. 
+Both summaries above state that the best model to use that predicts the weight of perch is the regression model that has the two predictor variables Height-Width. 
+
+# Bream
+
+```{r}
+bream <- filter(alldata, Species == "Bream")
+bream <- select(bream,-1)
+```
+
+```{r}
+library(leaps)
+regsubsets.out <-
+    regsubsets(Weight ~ .,
+               data = bream,
+               nbest = 1,       # 1 best model for each number of predictors
+               nvmax = NULL,    # NULL for no limit on number of variables
+               force.in = NULL, force.out = NULL,
+               method = "exhaustive")
+
+library(car)
+summary.out <- summary(regsubsets.out)
+as.data.frame(summary.out$outmat)
+subsets(regsubsets.out,statistic="adjr2",legend="bottomright",main="Adjusted R^2")
+```
+
+The model above is a summary of five different regression models. If we were to find the best regression model that predicts the weight of bream with two variables, it appears that we should use the model that uses L2-H, which stands for Length2 and Height. Though, the one with three-regressors which is L1-H-W that stands for Length1, Height, and Width has a better Adjusted R-Squared. 
+
+```{r}
+which.max(summary.out$adjr2)
+```
+
+```{r}
+summary.out$which[2,]
+```
+
+The best regression model that predicts the weight of bream by only using two predictor variables is Length2 and Height. The summary above correlates with this conclusion.
