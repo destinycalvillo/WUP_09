@@ -52,6 +52,8 @@ The model above is a summary of five different regression models. If we were to 
 which.max(summary.out$adjr2)
 ```
 
+This summary shows which model is better overall with the best Adjusted R-Squared. 
+
 ```{r}
 summary.out$which[2,]
 ```
@@ -87,8 +89,49 @@ The model above is a summary of five different regression models. If we were to 
 which.max(summary.out$adjr2)
 ```
 
+This summary shows which model is better model overall by having the best Adjusted R-Squared, despite the fact that we only want two predictor variables.
+
 ```{r}
 summary.out$which[2,]
 ```
 
 The best regression model that predicts the weight of bream by only using two predictor variables is Length2 and Height. The summary above correlates with this conclusion.
+
+# Smelt
+
+```{r}
+smelt <- filter(alldata, Species == "Smelt")
+smelt <- select(smelt,-1)
+```
+
+```{r}
+library(leaps)
+regsubsets.out <-
+    regsubsets(Weight ~ .,
+               data = smelt,
+               nbest = 1,       # 1 best model for each number of predictors
+               nvmax = NULL,    # NULL for no limit on number of variables
+               force.in = NULL, force.out = NULL,
+               method = "exhaustive")
+
+library(car)
+summary.out <- summary(regsubsets.out)
+as.data.frame(summary.out$outmat)
+subsets(regsubsets.out,statistic="adjr2",legend="bottomright",main="Adjusted R^2")
+```
+
+The model above is a summary of five different regression models. If we were to find the best regression model that predicts the weight of smelt by only using two variables, it appears that we should use the model that uses L2-W, which stands for Length2 and Width. Though, the one with four-regressors which is L1-L2-H-W that stands for Length1, Length2, Height, and Width has a better Adjusted R-Squared. 
+
+```{r}
+which.max(summary.out$adjr2)
+```
+
+This summary shows which model is better model overall by having the best Adjusted R-Squared, despite the fact that we only want two predictor variables.
+
+```{r}
+summary.out$which[2,]
+```
+
+The summary above correlates with our answer that Length2 and Width are the best two variables to use when predicting the weight of smelt.
+
+
